@@ -3,6 +3,7 @@ import { Landing } from './components/Landing';
 import { Quiz } from './components/Quiz';
 import { Loader } from './components/Loader';
 import { Result } from './components/Result';
+import { Content } from './components/Content';
 import { UserState } from './types';
 
 const App: React.FC = () => {
@@ -23,12 +24,17 @@ const App: React.FC = () => {
     setState(prev => ({ ...prev, step: 'result' }));
   };
 
+  const handleUnlock = () => {
+    setState(prev => ({ ...prev, step: 'content' }));
+  };
+
   return (
     <div className="min-h-screen bg-[#020617] text-slate-100 font-sans selection:bg-blue-500/30">
       {state.step === 'landing' && <Landing onStart={handleStart} />}
       {state.step === 'quiz' && <Quiz onComplete={handleQuizComplete} />}
       {state.step === 'loader' && <Loader onComplete={handleLoaderComplete} />}
-      {state.step === 'result' && <Result />}
+      {state.step === 'result' && <Result onUnlock={handleUnlock} />}
+      {state.step === 'content' && <Content />}
     </div>
   );
 };

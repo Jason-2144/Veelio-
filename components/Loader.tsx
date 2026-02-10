@@ -41,7 +41,7 @@ export const Loader: React.FC<LoaderProps> = ({ onComplete }) => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center bg-[#020617] font-sans">
-      
+
       {/* Icon Animation */}
       <div className="relative mb-12">
         <div className="absolute inset-0 bg-blue-600/10 blur-3xl rounded-full"></div>
@@ -53,7 +53,7 @@ export const Loader: React.FC<LoaderProps> = ({ onComplete }) => {
       <h2 className="text-xl md:text-2xl font-medium text-white mb-2 tracking-tight">
         Building your personalized study system…
       </h2>
-      
+
       {/* Subheadline */}
       <p className="text-slate-500 text-sm mb-12 max-w-sm mx-auto leading-relaxed">
         This system is being generated uniquely from your answers.
@@ -68,9 +68,9 @@ export const Loader: React.FC<LoaderProps> = ({ onComplete }) => {
 
       {/* Progress Bar */}
       <div className="w-64 h-1 bg-slate-900 rounded-full overflow-hidden border border-slate-800/50">
-        <div 
+        <div
           className="h-full bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.6)]"
-          style={{ 
+          style={{
             width: `${progress}%`,
             transition: 'width 50ms linear'
           }}

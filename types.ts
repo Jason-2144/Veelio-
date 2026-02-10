@@ -17,7 +17,7 @@ export interface Question {
 }
 
 export interface UserState {
-  step: 'landing' | 'quiz' | 'loader' | 'result';
+  step: 'landing' | 'quiz' | 'loader' | 'result' | 'content';
   answers: Record<number, string | number>;
 }
 

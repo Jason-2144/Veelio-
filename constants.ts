@@ -3,109 +3,259 @@ import { Question } from './types';
 export const QUESTIONS: Question[] = [
   {
     id: 1,
-    question: "What is the mountain you are climbing?",
+    question: "Which exam are you currently preparing for?",
     type: 'single',
-    microcopy: "The pressure curve is different for every exam.",
+    microcopy: "Different exams require different strategies.",
     options: [
-      { id: 'jee', label: 'JEE (Main + Advanced)' },
+      { id: 'jee', label: 'JEE' },
       { id: 'neet', label: 'NEET' },
-      { id: 'other', label: 'Other Competitive Exams' }
+      { id: 'jee_boards', label: 'JEE + Boards' },
+      { id: 'neet_boards', label: 'NEET + Boards' }
     ]
   },
   {
     id: 2,
-    question: "Where do you stand academically?",
+    question: "What stage are you in right now?",
     type: 'single',
-    microcopy: "A 12th grader has different constraints than a dropper.",
+    microcopy: "A dropper's timeline is very different from a 12th grader's.",
     options: [
-      { id: '11', label: 'Class 11', subtext: 'Just started, overwhelmed' },
-      { id: '12', label: 'Class 12', subtext: 'Boards + Prep juggling' },
-      { id: 'dropper', label: 'Dropper', subtext: 'One shot, high stakes' }
+      { id: '11', label: 'Class 11' },
+      { id: '12', label: 'Class 12' },
+      { id: 'dropper', label: 'Dropper' },
+      { id: 'revision', label: 'Final months / revision phase' }
     ]
   },
   {
     id: 3,
-    question: "When does your brain actually come alive?",
+    question: "How many months do you realistically have left before your exam?",
     type: 'single',
-    microcopy: "Fighting your biology guarantees burnout.",
+    microcopy: "Time is your most valuable asset.",
     options: [
-      { id: 'lark', label: 'Early Bird', subtext: '5:00 AM - 12:00 PM focus' },
-      { id: 'owl', label: 'Night Owl', subtext: '10:00 PM - 3:00 AM focus' },
-      { id: 'afternoon', label: 'Afternoon Warrior', subtext: 'Mid-day energy spikes' }
+      { id: '15_plus', label: '15+ months' },
+      { id: '10_12', label: '10–12 months' },
+      { id: '8_10', label: '8–10 months' },
+      { id: '4_6', label: '4–6 months' },
+      { id: '2_3', label: '2–3 months' }
     ]
   },
   {
     id: 4,
-    question: "Be honest. How long until you reach for your phone?",
+    question: "Right now, how do you feel about your preparation?",
     type: 'single',
-    microcopy: "We need to set your breaks before your brain forces them.",
+    microcopy: "Honesty is the first step to improvement.",
     options: [
-      { id: 'low', label: '15-20 Minutes', subtext: 'Highly distracted' },
-      { id: 'med', label: '45 Minutes', subtext: 'Standard endurance' },
-      { id: 'high', label: '90+ Minutes', subtext: 'Deep work state' }
+      { id: 'ahead', label: 'Ahead of schedule' },
+      { id: 'on_track', label: 'On track' },
+      { id: 'behind', label: 'Slightly behind' },
+      { id: 'very_behind', label: 'Very behind' }
     ]
   },
   {
     id: 5,
-    question: "How much sleep did you average in the last 7 days?",
+    question: "If the exam were tomorrow, how confident would you honestly feel?",
     type: 'single',
-    microcopy: "Sleep debt kills recall. We need to know the damage.",
+    microcopy: "Confidence comes from preparation.",
     options: [
-      { id: 'starved', label: '< 5 Hours', subtext: 'Danger zone' },
-      { id: 'low', label: '5-6 Hours', subtext: 'Survival mode' },
-      { id: 'good', label: '7+ Hours', subtext: 'Optimal recovery' }
+      { id: 'high', label: 'High' },
+      { id: 'moderate', label: 'Moderate' },
+      { id: 'low', label: 'Low' }
     ]
   },
   {
     id: 6,
-    question: "What is your silent killer right now?",
+    question: "When do you naturally feel most focused?",
     type: 'single',
-    microcopy: "Identifying the enemy is 50% of the battle.",
+    microcopy: "Work with your biology, not against it.",
     options: [
-      { id: 'proc', label: 'Procrastination', subtext: 'Starting is the hardest part' },
-      { id: 'burn', label: 'Burnout', subtext: 'Working hard, retaining nothing' },
-      { id: 'anx', label: 'Exam Anxiety', subtext: 'Fear of failure paralyzes me' },
-      { id: 'backlog', label: 'Backlogs', subtext: 'Drowning in old chapters' }
+      { id: 'morning', label: 'Early mornings' },
+      { id: 'night', label: 'Late nights' },
+      { id: 'varies', label: 'It varies day to day' }
     ]
   },
   {
     id: 7,
-    question: "Where are you fighting this war?",
+    question: "Do you currently follow a fixed daily study routine?",
     type: 'single',
-    microcopy: "Your environment dictates your discipline.",
+    microcopy: "Consistency beats intensity.",
     options: [
-      { id: 'home', label: 'Home', subtext: 'Comfortable but distracting' },
-      { id: 'hostel', label: 'Hostel / PG', subtext: 'Social chaos, low privacy' }
+      { id: 'yes', label: 'Yes, mostly consistent' },
+      { id: 'somewhat', label: 'Somewhat consistent' },
+      { id: 'no', label: 'No, every day is different' }
     ]
   },
   {
     id: 8,
-    question: "What takes your non-negotiable hours?",
+    question: "How long can you usually study before zoning out?",
     type: 'single',
-    microcopy: "We build around your life, not over it.",
+    microcopy: "Knowing your limit helps us plan breaks.",
     options: [
-      { id: 'school', label: 'Regular School', subtext: '6-7 hours gone' },
-      { id: 'coaching', label: 'Offline Coaching', subtext: 'Travel + Class fatigue' },
-      { id: 'dummy', label: 'Dummy School / Online', subtext: 'All day available' }
+      { id: '45_plus', label: '45+ minutes' },
+      { id: '25_45', label: '25–45 minutes' },
+      { id: '10_25', label: '10–25 minutes' },
+      { id: 'less_10', label: 'Less than 10 minutes' }
     ]
   },
   {
     id: 9,
-    question: "How do you prefer to attack a chapter?",
+    question: "Do you feel restless while studying?",
     type: 'single',
-    microcopy: "Your flow state requires the right rhythm.",
+    microcopy: "Restlessness is a sign of underlying stress.",
     options: [
-      { id: 'sprint', label: 'Sprints', subtext: 'Short bursts, high intensity' },
-      { id: 'marathon', label: 'Marathons', subtext: 'Long, uninterrupted sessions' }
+      { id: 'often', label: 'Very often' },
+      { id: 'sometimes', label: 'Sometimes' },
+      { id: 'rarely', label: 'Rarely' },
+      { id: 'never', label: 'Never' }
     ]
   },
   {
     id: 10,
-    question: "On a scale of 1-10, what is your current stress level?",
-    type: 'slider',
-    microcopy: "This calibrates the intensity of your initial plan.",
-    minLabel: "Zen Mode (Aggressive Plan)",
-    maxLabel: "Panic Mode (Protective Plan)"
+    question: "Do you feel mentally tired even when you are physically fine?",
+    type: 'single',
+    microcopy: "Mental fatigue is just as real as physical fatigue.",
+    options: [
+      { id: 'often', label: 'Very often' },
+      { id: 'sometimes', label: 'Sometimes' },
+      { id: 'rarely', label: 'Rarely' },
+      { id: 'never', label: 'Never' }
+    ]
+  },
+  {
+    id: 11,
+    question: "Does one bad study day affect multiple days after it?",
+    type: 'single',
+    microcopy: "Recovery speed defines your long-term success.",
+    options: [
+      { id: 'yes', label: 'Yes, very often' },
+      { id: 'sometimes', label: 'Sometimes' },
+      { id: 'rarely', label: 'Rarely' },
+      { id: 'never', label: 'Never' }
+    ]
+  },
+  {
+    id: 12,
+    question: "Do you feel motivated but inconsistent with your studies?",
+    type: 'single',
+    microcopy: "Motivation gets you started. Habit keeps you going.",
+    options: [
+      { id: 'yes', label: 'Yes, very often' },
+      { id: 'sometimes', label: 'Sometimes' },
+      { id: 'rarely', label: 'Rarely' },
+      { id: 'never', label: 'Never' }
+    ]
+  },
+  {
+    id: 13,
+    question: "Do you try to compensate by studying extreme hours?",
+    type: 'single',
+    microcopy: "Revenge studying often leads to burnout.",
+    options: [
+      { id: 'yes', label: 'Yes, frequently' },
+      { id: 'sometimes', label: 'Sometimes' },
+      { id: 'rarely', label: 'Rarely' },
+      { id: 'never', label: 'Never' }
+    ]
+  },
+  {
+    id: 14,
+    question: "Have you abandoned study plans midway before?",
+    type: 'single',
+    microcopy: "The best plan is the one you stick to.",
+    options: [
+      { id: 'yes', label: 'Yes, many times' },
+      { id: 'few', label: 'A few times' },
+      { id: 'rarely', label: 'Rarely' },
+      { id: 'never', label: 'Never' }
+    ]
+  },
+  {
+    id: 15,
+    question: "Do you over-study subjects you like and avoid weaker ones?",
+    type: 'single',
+    microcopy: "Comfort zones effectively kill growth.",
+    options: [
+      { id: 'yes', label: 'Yes, very often' },
+      { id: 'sometimes', label: 'Sometimes' },
+      { id: 'rarely', label: 'Rarely' },
+      { id: 'never', label: 'Never' }
+    ]
+  },
+  {
+    id: 16,
+    question: "Do you study daily without having a clear weekly structure?",
+    type: 'single',
+    microcopy: "Failing to plan is planning to fail.",
+    options: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'sometimes', label: 'Sometimes' },
+      { id: 'no', label: 'No' }
+    ]
+  },
+  {
+    id: 17,
+    question: "How do you usually revise?",
+    type: 'single',
+    microcopy: "Revision is not just re-reading.",
+    options: [
+      { id: 'systematic', label: 'Systematically (planned revisions)' },
+      { id: 'random', label: 'Randomly (whenever I feel like it)' },
+      { id: 'rarely', label: 'I rarely revise properly' }
+    ]
+  },
+  {
+    id: 18,
+    question: "Do you avoid taking tests until you feel “ready”?",
+    type: 'single',
+    microcopy: "You will never feel 100% ready.",
+    options: [
+      { id: 'yes', label: 'Yes, very often' },
+      { id: 'sometimes', label: 'Sometimes' },
+      { id: 'rarely', label: 'Rarely' },
+      { id: 'never', label: 'Never' }
+    ]
+  },
+  {
+    id: 19,
+    question: "Have you ever followed a study system that worked for more than two weeks?",
+    type: 'single',
+    microcopy: "Sustainability is key.",
+    options: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'no', label: 'No' },
+      { id: 'unsure', label: 'Not sure' }
+    ]
+  },
+  {
+    id: 20,
+    question: "Did that system adapt to bad or low-energy days?",
+    type: 'single',
+    microcopy: "Rigid systems break under pressure.",
+    options: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'somewhat', label: 'Somewhat' },
+      { id: 'no', label: 'No' },
+      { id: 'none', label: 'I haven’t had such a system' }
+    ]
+  },
+  {
+    id: 21,
+    question: "Are you willing to follow a system even on bad days?",
+    type: 'single',
+    microcopy: "Commitment is staying true to the plan when the mood leaves you.",
+    options: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'maybe', label: 'Maybe' },
+      { id: 'no', label: 'No' }
+    ]
+  },
+  {
+    id: 22,
+    question: "What do you want right now?",
+    type: 'single',
+    microcopy: "Let's build what you need.",
+    options: [
+      { id: 'fixed', label: 'A fixed timetable to follow' },
+      { id: 'flexible', label: 'A flexible system that adapts to bad days' }
+    ]
   }
 ];
 

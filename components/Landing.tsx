@@ -9,7 +9,12 @@ interface LandingProps {
 export const Landing: React.FC<LandingProps> = ({ onStart }) => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center max-w-2xl mx-auto animate-fade-in">
-      
+
+      {/* Branding */}
+      <div className="mb-8 p-3 bg-blue-500/10 rounded-full border border-blue-500/20">
+        <span className="text-blue-400 font-bold tracking-widest text-sm px-2">VEELIO</span>
+      </div>
+
       {/* Headline */}
       <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-6 leading-tight">
         Why does your schedule fail? <br />
@@ -18,7 +23,7 @@ export const Landing: React.FC<LandingProps> = ({ onStart }) => {
 
       {/* Subtext */}
       <p className="text-lg text-slate-400 mb-10 leading-relaxed max-w-lg">
-        Stop copying toppers. Their routine is their advantage—and your trap. 
+        Stop copying toppers. Their routine is their advantage—and your trap.
         We analyze your biology, stress levels, and academic debt to build a survival system that works when motivation dies.
       </p>
 
@@ -28,7 +33,7 @@ export const Landing: React.FC<LandingProps> = ({ onStart }) => {
           Analyze My Study Pattern
           <ArrowRight className="w-5 h-5" />
         </Button>
-        
+
         <div className="flex items-center justify-center gap-4 text-xs text-slate-500">
           <span className="flex items-center gap-1">
             <Clock className="w-3 h-3" /> Takes 60 seconds

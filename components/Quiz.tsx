@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { QUESTIONS } from '../constants';
 import { Button } from './ui/Button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowLeft } from 'lucide-react';
 
 interface QuizProps {
   onComplete: (answers: Record<number, string | number>) => void;
@@ -29,12 +29,28 @@ export const Quiz: React.FC<QuizProps> = ({ onComplete }) => {
     }
   };
 
+  const handleBack = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(prev => prev - 1);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col max-w-xl mx-auto p-6">
-      
+
+      {/* Back Button */}
+      {currentIndex > 0 && (
+        <button
+          onClick={handleBack}
+          className="self-start text-slate-500 hover:text-white transition-colors flex items-center gap-2 mb-4"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back
+        </button>
+      )}
+
       {/* Progress */}
       <div className="w-full h-1 bg-slate-800 rounded-full mb-12 mt-8">
-        <div 
+        <div
           className="h-full bg-blue-600 rounded-full transition-all duration-500 ease-out shadow-[0_0_10px_rgba(37,99,235,0.3)]"
           style={{ width: `${progress}%` }}
         />
@@ -78,10 +94,10 @@ export const Quiz: React.FC<QuizProps> = ({ onComplete }) => {
           {/* Slider for Q10 */}
           {currentQuestion.type === 'slider' && (
             <div className="py-8">
-              <input 
-                type="range" 
-                min="1" 
-                max="10" 
+              <input
+                type="range"
+                min="1"
+                max="10"
                 step="1"
                 value={sliderValue}
                 onChange={(e) => setSliderValue(Number(e.target.value))}
@@ -92,10 +108,10 @@ export const Quiz: React.FC<QuizProps> = ({ onComplete }) => {
                 <span className="text-blue-400 text-lg font-bold">{sliderValue}</span>
                 <span>{currentQuestion.maxLabel}</span>
               </div>
-              
-              <Button 
-                onClick={() => handleOptionSelect(sliderValue)} 
-                fullWidth 
+
+              <Button
+                onClick={() => handleOptionSelect(sliderValue)}
+                fullWidth
                 className="mt-12"
               >
                 Confirm Level <ArrowRight className="w-4 h-4" />
