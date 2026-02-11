@@ -5,9 +5,10 @@ import { ArrowRight, ArrowLeft } from 'lucide-react';
 
 interface QuizProps {
   onComplete: (answers: Record<number, string | number>) => void;
+  onExit?: () => void;
 }
 
-export const Quiz: React.FC<QuizProps> = ({ onComplete }) => {
+export const Quiz: React.FC<QuizProps> = ({ onComplete, onExit }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string | number>>({});
   const [sliderValue, setSliderValue] = useState(5);
@@ -32,6 +33,8 @@ export const Quiz: React.FC<QuizProps> = ({ onComplete }) => {
   const handleBack = () => {
     if (currentIndex > 0) {
       setCurrentIndex(prev => prev - 1);
+    } else if (onExit) {
+      onExit();
     }
   };
 
@@ -39,14 +42,12 @@ export const Quiz: React.FC<QuizProps> = ({ onComplete }) => {
     <div className="min-h-screen flex flex-col max-w-xl mx-auto p-6">
 
       {/* Back Button */}
-      {currentIndex > 0 && (
-        <button
-          onClick={handleBack}
-          className="self-start text-slate-500 hover:text-white transition-colors flex items-center gap-2 mb-4"
-        >
-          <ArrowLeft className="w-4 h-4" /> Back
-        </button>
-      )}
+      <button
+        onClick={handleBack}
+        className="self-start text-slate-400 hover:text-white transition-colors flex items-center gap-2 mb-4 px-2 py-1 -ml-2 rounded-lg hover:bg-slate-800/50"
+      >
+        <ArrowLeft className="w-4 h-4" /> Back
+      </button>
 
       {/* Progress */}
       <div className="w-full h-1 bg-slate-800 rounded-full mb-12 mt-8">

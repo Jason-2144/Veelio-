@@ -28,10 +28,14 @@ const App: React.FC = () => {
     setState(prev => ({ ...prev, step: 'content' }));
   };
 
+  const handleBackToLanding = () => {
+    setState(prev => ({ ...prev, step: 'landing', answers: {} }));
+  };
+
   return (
     <div className="min-h-screen bg-[#020617] text-slate-100 font-sans selection:bg-blue-500/30">
       {state.step === 'landing' && <Landing onStart={handleStart} />}
-      {state.step === 'quiz' && <Quiz onComplete={handleQuizComplete} />}
+      {state.step === 'quiz' && <Quiz onComplete={handleQuizComplete} onExit={handleBackToLanding} />}
       {state.step === 'loader' && <Loader onComplete={handleLoaderComplete} />}
       {state.step === 'result' && <Result onUnlock={handleUnlock} />}
       {state.step === 'content' && <Content />}
