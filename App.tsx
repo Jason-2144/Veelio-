@@ -4,12 +4,14 @@ import { Quiz } from './components/Quiz';
 import { Loader } from './components/Loader';
 import { Result } from './components/Result';
 import { Content } from './components/Content';
-import { UserState } from './types';
+import { UserState, ContentModule } from './types';
+import { CORE_MAPPING, MODIFIER_MAPPING } from './constants';
 
 const App: React.FC = () => {
   const [state, setState] = useState<UserState>({
     step: 'landing',
-    answers: {}
+    answers: {},
+    unlockedModules: []
   });
 
   const handleStart = () => {
@@ -25,11 +27,32 @@ const App: React.FC = () => {
   };
 
   const handleUnlock = () => {
-    setState(prev => ({ ...prev, step: 'content' }));
+    const modules: ContentModule[] = [];
+    const { answers } = state;
+
+    // 1. Core Module Calculation
+    const exam = answers[1] as string; // Question 1: Exam (jee/neet)
+    const grade = answers[2] as string; // Question 2: Grade (11/12/dropper/revision)
+
+    if (exam && grade && CORE_MAPPING[exam]?.[grade]) {
+      modules.push(CORE_MAPPING[exam][grade]);
+    }
+
+    // 2. Modifiers Calculation
+    Object.entries(answers).forEach(([questionId, answerId]) => {
+      const qId = Number(questionId);
+      const aId = String(answerId);
+
+      if (MODIFIER_MAPPING[qId]?.[aId]) {
+        modules.push(MODIFIER_MAPPING[qId][aId]);
+      }
+    });
+
+    setState(prev => ({ ...prev, step: 'content', unlockedModules: modules }));
   };
 
   const handleBackToLanding = () => {
-    setState(prev => ({ ...prev, step: 'landing', answers: {} }));
+    setState(prev => ({ ...prev, step: 'landing', answers: {}, unlockedModules: [] }));
   };
 
   return (
@@ -38,7 +61,7 @@ const App: React.FC = () => {
       {state.step === 'quiz' && <Quiz onComplete={handleQuizComplete} onExit={handleBackToLanding} />}
       {state.step === 'loader' && <Loader onComplete={handleLoaderComplete} />}
       {state.step === 'result' && <Result onUnlock={handleUnlock} />}
-      {state.step === 'content' && <Content />}
+      {state.step === 'content' && <Content modules={state.unlockedModules || []} />}
     </div>
   );
 };

@@ -1,4 +1,125 @@
-import { Question } from './types';
+import { Question, ContentModule } from './types';
+
+export const CORE_MAPPING: Record<string, Record<string, ContentModule>> = {
+  'jee': {
+    '11': {
+      id: 'jee-11',
+      title: 'JEE Class 11 Core System',
+      description: 'Your personalized study system for JEE Class 11.',
+      file: 'JEE-11TH-GRADE-CORE-SYSTEM.pdf',
+      type: 'core'
+    },
+    '12': {
+      id: 'jee-12',
+      title: 'JEE Class 12 Core System',
+      description: 'Your personalized study system for JEE Class 12.',
+      file: 'JEE-Class-12-Core-Study-System.pdf',
+      type: 'core'
+    },
+    'dropper': {
+      id: 'jee-dropper',
+      title: 'JEE Dropper Core System',
+      description: 'Your personalized study system for JEE Droppers.',
+      file: 'JEE-Dropper-Core-Study-System.pdf',
+      type: 'core'
+    },
+    'revision': {
+      id: 'jee-revision',
+      title: 'JEE War Plan (Revision)',
+      description: '90-120 Day War Plan for Final Revision.',
+      file: 'JEE-90-120-Day-WAR-PLAN.pdf',
+      type: 'core'
+    }
+  },
+  'neet': {
+    '11': {
+      id: 'neet-11',
+      title: 'NEET Class 11 Core System',
+      description: 'Your personalized study system for NEET Class 11.',
+      file: 'NEET-11th-GRADE-CORE-SYSTEM.pdf',
+      type: 'core'
+    },
+    '12': {
+      id: 'neet-12',
+      title: 'NEET Class 12 Core System',
+      description: 'Your personalized study system for NEET Class 12.',
+      file: 'NEET-12th-Grade-Core-Study-System.pdf',
+      type: 'core'
+    },
+    'dropper': {
+      id: 'neet-dropper',
+      title: 'NEET Dropper Core System',
+      description: 'Your personalized study system for NEET Droppers.',
+      file: 'NEET-Dropper-Core-Study-System.pdf',
+      type: 'core'
+    },
+    'revision': {
+      id: 'neet-revision',
+      title: 'NEET War Plan (Revision)',
+      description: '90-10 Day War Plan for Final Revision.',
+      file: 'NEET-90-10-Day-WAR-PLAN-core-study-system.pdf',
+      type: 'core'
+    }
+  }
+};
+
+export const MODIFIER_MAPPING: Record<number, Record<string, ContentModule>> = {
+  6: { // Question 6: Focus Time
+    'morning': {
+      id: 'mod-dawn',
+      title: 'The DawnCore Protocol',
+      description: 'Optimizing your early morning focus sessions.',
+      file: 'DAWNCORE modifier.pdf',
+      type: 'modifier'
+    },
+    'night': {
+      id: 'mod-night',
+      title: 'Night Owl Time Modifier',
+      description: 'Maximizing productivity during late night hours.',
+      file: 'Night-Owl-Time-Modifier.pdf',
+      type: 'modifier'
+    }
+  },
+  8: { // Question 8: Focus Duration
+    '45_plus': {
+      id: 'mod-focus-high',
+      title: 'High Focus Modifier',
+      description: 'Advanced techniques for prolonged deep work sessions.',
+      file: 'High-Focus-Modifier.pdf',
+      type: 'modifier'
+    },
+    '25_45': {
+      id: 'mod-focus-med',
+      title: 'High Focus Modifier',
+      description: 'Advanced techniques for prolonged deep work sessions.',
+      file: 'High-Focus-Modifier.pdf',
+      type: 'modifier'
+    },
+    '10_25': {
+      id: 'mod-focus-low',
+      title: 'Low Focus Modifier',
+      description: 'Strategies to build your attention span from scratch.',
+      file: 'Low-Focus-Modifier.pdf',
+      type: 'modifier'
+    },
+    'less_10': {
+      id: 'mod-focus-crit',
+      title: 'Low Focus Modifier',
+      description: 'Strategies to build your attention span from scratch.',
+      file: 'Low-Focus-Modifier.pdf',
+      type: 'modifier'
+    }
+  },
+  23: { // Question 23: Athlete
+    'yes': {
+      id: 'mod-athlete',
+      title: 'The Athlete Modifier',
+      description: 'Balancing intense physical training with academic excellence.',
+      file: 'ATHLETE-MODIFIER.pdf',
+      type: 'modifier'
+    }
+  }
+};
 
 export const QUESTIONS: Question[] = [
   {
@@ -255,6 +376,16 @@ export const QUESTIONS: Question[] = [
     options: [
       { id: 'fixed', label: 'A fixed timetable to follow' },
       { id: 'flexible', label: 'A flexible system that adapts to bad days' }
+    ]
+  },
+  {
+    id: 23,
+    question: "Are you a competitive athlete or do you participate in intense daily sports training?",
+    type: 'single',
+    microcopy: "Physical fatigue requires a different study strategy.",
+    options: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'no', label: 'No' }
     ]
   }
 ];

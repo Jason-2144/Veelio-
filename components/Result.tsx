@@ -9,10 +9,11 @@ interface ResultProps {
 
 export const Result: React.FC<ResultProps> = ({ onUnlock }) => {
   const handlePayment = () => {
-    // TEMPORARY BYPASS
-    // onUnlock();
+    // TEMPORARY: Bypass payment for testing
+    onUnlock();
+    return;
 
-
+    /*
     const options = {
       key: 'rzp_live_SE8ySjJENHfU7Q', // Your Live Key
       amount: 19900, // 199 INR in paise
@@ -44,7 +45,7 @@ export const Result: React.FC<ResultProps> = ({ onUnlock }) => {
     });
 
     rzp1.open();
-
+    */
   };
 
   return (
