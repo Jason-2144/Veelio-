@@ -44,17 +44,17 @@ export const Quiz: React.FC<QuizProps> = ({ onComplete, onExit }) => {
       return;
     }
 
-    advanceQuestion();
+    advanceQuestion(newAnswers);
   };
 
-  const advanceQuestion = () => {
+  const advanceQuestion = (latestAnswers?: Record<number, string | number>) => {
     if (currentIndex < QUESTIONS.length - 1) {
       setTimeout(() => {
         setCurrentIndex(prev => prev + 1);
         setSliderValue(5);
       }, 250);
     } else {
-      onComplete(answers);
+      onComplete(latestAnswers || answers);
     }
   };
 
