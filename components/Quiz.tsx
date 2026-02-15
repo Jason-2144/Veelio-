@@ -12,6 +12,7 @@ export const Quiz: React.FC<QuizProps> = ({ onComplete, onExit }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string | number>>({});
   const [sliderValue, setSliderValue] = useState(5);
+  const [testimonial, setTestimonial] = useState<{ show: boolean; author: string; role: string; quote: string; image: string } | null>(null);
 
   const currentQuestion = QUESTIONS[currentIndex];
   const progress = ((currentIndex + 1) / QUESTIONS.length) * 100;
@@ -20,14 +21,46 @@ export const Quiz: React.FC<QuizProps> = ({ onComplete, onExit }) => {
     const newAnswers = { ...answers, [currentQuestion.id]: value };
     setAnswers(newAnswers);
 
+    // Check for testimonial trigger points
+    if (currentIndex === 7) { // After Q8 (index 7)
+      setTestimonial({
+        show: true,
+        author: "Aarav",
+        role: "IIT Guwahati - JEE",
+        quote: "I was stuck for months and honestly felt confused most days. I didn’t think another ‘system’ would help, but having fixed study blocks and sleep timing reduced my overthinking. My prep finally started feeling controlled.",
+        image: "/images/aarav.png"
+      });
+      return;
+    }
+
+    if (currentIndex === 15) { // After Q16 (index 15)
+      setTestimonial({
+        show: true,
+        author: "Sneha",
+        role: "AIIMS DELHI - NEET",
+        quote: "Planning everything myself was exhausting and I kept doubting my decisions. This made me stop thinking so much and just follow what was already decided. Some days were still hard, but it became manageable.",
+        image: "/images/sneha.webp"
+      });
+      return;
+    }
+
+    advanceQuestion();
+  };
+
+  const advanceQuestion = () => {
     if (currentIndex < QUESTIONS.length - 1) {
       setTimeout(() => {
         setCurrentIndex(prev => prev + 1);
-        setSliderValue(5); // Reset slider for next Q if needed, though only Q10 is slider
-      }, 250); // Small delay for visual feedback
+        setSliderValue(5);
+      }, 250);
     } else {
-      onComplete(newAnswers);
+      onComplete(answers);
     }
+  };
+
+  const closeTestimonial = () => {
+    setTestimonial(null);
+    advanceQuestion();
   };
 
   const handleBack = () => {
@@ -122,6 +155,39 @@ export const Quiz: React.FC<QuizProps> = ({ onComplete, onExit }) => {
         </div>
       </div>
 
-    </div>
+
+      {/* Testimonial Overlay */}
+      {
+        testimonial && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+
+              <div className="flex flex-col items-center text-center space-y-4">
+                <img
+                  src={testimonial.image}
+                  alt={testimonial.author}
+                  className="w-16 h-16 rounded-full border-2 border-slate-700 object-cover"
+                />
+
+                <div>
+                  <p className="text-lg italic text-slate-300 font-light leading-relaxed">"{testimonial.quote}"</p>
+                </div>
+
+                <div className="pt-4 border-t border-slate-800 w-full">
+                  <div className="font-bold text-white">{testimonial.author}</div>
+                  <div className="text-xs text-blue-400 font-medium uppercase tracking-wider">{testimonial.role}</div>
+                </div>
+
+                <Button onClick={closeTestimonial} fullWidth className="mt-4">
+                  Continue Assessment <ArrowRight className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+    </div >
   );
 };

@@ -31,8 +31,12 @@ const App: React.FC = () => {
     const { answers } = state;
 
     // 1. Core Module Calculation
-    const exam = answers[1] as string; // Question 1: Exam (jee/neet)
+    let exam = answers[1] as string; // Question 1: Exam (jee/neet)
     const grade = answers[2] as string; // Question 2: Grade (11/12/dropper/revision)
+
+    // Normalize exam IDs
+    if (exam === 'jee_boards') exam = 'jee';
+    if (exam === 'neet_boards') exam = 'neet';
 
     if (exam && grade && CORE_MAPPING[exam]?.[grade]) {
       modules.push(CORE_MAPPING[exam][grade]);
@@ -60,7 +64,7 @@ const App: React.FC = () => {
       {state.step === 'landing' && <Landing onStart={handleStart} />}
       {state.step === 'quiz' && <Quiz onComplete={handleQuizComplete} onExit={handleBackToLanding} />}
       {state.step === 'loader' && <Loader onComplete={handleLoaderComplete} />}
-      {state.step === 'result' && <Result onUnlock={handleUnlock} />}
+      {state.step === 'result' && <Result onUnlock={handleUnlock} answers={state.answers} />}
       {state.step === 'content' && <Content modules={state.unlockedModules || []} />}
     </div>
   );

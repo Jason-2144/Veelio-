@@ -1,152 +1,175 @@
-import React from 'react';
-import { PAYWALL_FEATURES } from '../constants';
+import React, { useMemo } from 'react';
 import { Button } from './ui/Button';
-import { Lock, CheckCircle2, AlertTriangle, Moon, Battery, Fingerprint } from 'lucide-react';
+import { Lock, Zap, Clock, AlertCircle, TrendingUp } from 'lucide-react';
+import { evaluateStudyProfile, deriveResults } from '../utils/scoring';
 
 interface ResultProps {
   onUnlock: () => void;
+  answers: Record<number, string | number>;
 }
 
-export const Result: React.FC<ResultProps> = ({ onUnlock }) => {
+export const Result: React.FC<ResultProps> = ({ onUnlock, answers }) => {
   const handlePayment = () => {
-    // TEMPORARY: Bypass payment for testing
-    onUnlock();
-    return;
-
-    /*
     const options = {
-      key: 'rzp_live_SE8ySjJENHfU7Q', // Your Live Key
-      amount: 19900, // 199 INR in paise
+      key: 'rzp_live_SE8ySjJENHfU7Q',
+      amount: 19900,
       currency: 'INR',
       name: 'Veelio',
       description: 'Unlock Full Study System',
-      image: 'https://cdn.lucide.dev/lucide/brain.svg',
-      handler: function (response: any) {
-        alert('Payment Successful!');
-        alert('Payment ID: ' + response.razorpay_payment_id);
-        onUnlock(); // Call this on success
-      },
-      prefill: {
-        name: '',
-        email: '',
-        contact: ''
-      },
-      theme: {
-        color: '#2563eb'
-      }
+      handler: function (response: any) { onUnlock(); },
+      theme: { color: '#2563eb' }
     };
-
     const rzp1 = new (window as any).Razorpay(options);
-
-    rzp1.on('payment.failed', function (response: any) {
-      alert('Payment Failed');
-      alert('Reason: ' + response.error.reason);
-      console.error(response.error);
-    });
-
     rzp1.open();
-    */
   };
 
+  const results = useMemo(() => {
+    const scores = evaluateStudyProfile(answers);
+    return deriveResults(scores);
+  }, [answers]);
+
+  const { burnoutLevel, mainDifficulty, peakEnergy, focusType, potential } = results;
+
+  let stressColor = 'bg-yellow-500';
+  let stressScore = 50; // 0-100
+
+  if (burnoutLevel === 'High') {
+    stressColor = 'bg-red-500';
+    stressScore = 85;
+  } else if (burnoutLevel === 'Low') {
+    stressColor = 'bg-green-500';
+    stressScore = 20;
+  }
+
   return (
-    <div className="min-h-screen bg-[#020617] pb-20">
+    <div className="min-h-screen bg-[#020617] text-slate-100 p-4 font-sans flex items-center justify-center">
+      <div className="max-w-2xl w-full space-y-6 animate-fade-in-up">
 
-      {/* 1. Identity Reveal (Sticky Header feeling) */}
-      <div className="bg-gradient-to-b from-blue-950/20 to-[#020617] border-b border-blue-900/30 p-8 pt-12 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-400 text-xs mb-6">
-          <Fingerprint className="w-3 h-3" />
-          Archetype Identified
+        {/* Header */}
+        <div className="text-center mb-8">
+          <p className="text-slate-400 text-sm font-medium tracking-wider uppercase mb-2">Analysis Complete</p>
+          <h1 className="text-3xl font-bold text-white">Summary of your Study Profile</h1>
         </div>
 
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
-          You are a <span className="text-blue-400">Resilient Night Owl Hardworker</span>
-        </h1>
+        {/* --- MAIN CARD: RESILIENCE / STRESS LEVEL --- */}
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
 
-        <div className="flex justify-center gap-4 text-xs font-mono text-slate-500 mb-6">
-          <span className="flex items-center gap-1"><Moon className="w-3 h-3" /> CHRONOTYPE: LATE</span>
-          <span className="flex items-center gap-1"><Battery className="w-3 h-3" /> BURNOUT RISK: HIGH</span>
-        </div>
-      </div>
-
-      <div className="max-w-2xl mx-auto px-6 -mt-4">
-
-        {/* 2. Validation Paragraph */}
-        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl mb-12 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-1 h-full bg-blue-600"></div>
-          <p className="text-slate-300 leading-relaxed text-lg">
-            <span className="text-white font-semibold">Here is the truth:</span> You are not lazy. You actually work hard — just at the wrong times, under constant pressure.
-            <br /><br />
-            Your brain doesn't activate until 10 PM, yet you force yourself to wake up at 6 AM because "that's what toppers do." This creates a chronic sleep debt loop that kills your retention, no matter how many hours you stare at books.
-          </p>
-        </div>
-
-        {/* 3. The "Product" (Blurred) */}
-        <div className="space-y-6 relative">
-
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-white">Your System is Ready</h3>
-            <span className="text-xs text-green-400 flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3" /> Generated
+          <div className="flex justify-between items-center mb-12">
+            <h2 className="text-xl font-semibold text-slate-200">Current Stress & Burnout Risk</h2>
+            <span className={`px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide text-white ${burnoutLevel === 'High' ? 'bg-red-500/20 text-red-400 border border-red-500/50' : burnoutLevel === 'Medium' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/50' : 'bg-green-500/20 text-green-400 border border-green-500/50'}`}>
+              {burnoutLevel} Level
             </span>
           </div>
 
-          {/* Cards Container */}
-          <div className="space-y-4 select-none pointer-events-none">
-            {PAYWALL_FEATURES.map((feature, idx) => (
-              <div key={idx} className="bg-slate-900/40 border border-slate-800 p-5 rounded-xl flex items-center justify-between opacity-50 blur-[2px]">
-                <div>
-                  <h4 className="font-semibold text-slate-200">{feature.title}</h4>
-                  <p className="text-sm text-slate-500">{feature.desc}</p>
-                </div>
-                <div className="h-8 w-8 rounded-full bg-slate-800"></div>
+          {/* Visualization (Person/Icon) could go here, simplified for code */}
+
+          {/* Slider Component */}
+          <div className="mb-8 relative">
+            {/* Gradient Bar */}
+            <div className="h-4 w-full bg-gradient-to-r from-green-500/30 via-yellow-500/30 to-red-500/30 rounded-full mb-2 relative">
+              {/* Tick Marks (Invisible mostly, just for spacing) */}
+            </div>
+
+            {/* The Thumb */}
+            <div
+              className="absolute top-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full shadow-[0_0_15px_rgba(255,255,255,0.5)] border-4 border-slate-900 transition-all duration-1000 ease-out"
+              style={{ left: `${stressScore}%` }}
+            >
+              <div className="absolute -top-10 -translate-x-1/2 bg-slate-800 text-white text-xs py-1 px-3 rounded-lg border border-slate-700 whitespace-nowrap">
+                You are here
               </div>
-            ))}
+            </div>
+
+            {/* Labels */}
+            <div className="flex justify-between text-xs text-slate-500 font-medium px-1">
+              <span>Low</span>
+              <span>Normal</span>
+              <span>Medium</span>
+              <span>High</span>
+            </div>
           </div>
 
-          {/* Paywall Overlay */}
-          <div className="absolute inset-0 top-10 backdrop-blur-[6px] bg-gradient-to-b from-[#020617]/0 via-[#020617]/90 to-[#020617] flex flex-col items-center justify-end pb-0 z-10 h-[110%]">
-
-            <div className="w-full bg-[#0B1120] border border-blue-900/20 shadow-2xl rounded-t-3xl p-8 animate-slide-up">
-              <div className="flex justify-center mb-6">
-                <div className="bg-blue-900/20 p-4 rounded-full border border-blue-900/30">
-                  <Lock className="w-8 h-8 text-blue-400" />
-                </div>
-              </div>
-
-              <h2 className="text-2xl font-bold text-white text-center mb-2">
-                Unlock Your Full Study System
-              </h2>
-              <p className="text-slate-400 text-center mb-8 text-sm">
-                We've analyzed your sleep, focus, and stress. <br />This isn't a generic template. It's yours.
+          {/* Info Box */}
+          <div className={`p-5 rounded-xl border flex gap-4 ${burnoutLevel === 'High' ? 'bg-red-900/10 border-red-500/20' : burnoutLevel === 'Medium' ? 'bg-yellow-900/10 border-yellow-500/20' : 'bg-green-900/10 border-green-500/20'}`}>
+            <AlertCircle className={`w-6 h-6 shrink-0 ${burnoutLevel === 'High' ? 'text-red-400' : 'text-yellow-400'}`} />
+            <div>
+              <h4 className={`font-bold text-sm mb-1 ${burnoutLevel === 'High' ? 'text-red-400' : 'text-yellow-400'}`}>
+                {burnoutLevel.toUpperCase()} Risk Detected
+              </h4>
+              <p className="text-slate-400 text-sm leading-relaxed">
+                {burnoutLevel === 'High'
+                  ? "Your answers indicate intense pressure. This level contributes to procrastination ('freeze response'), reduced retention, and mental fatigue."
+                  : "You are experiencing moderate pressure. Without a system, this can quickly escalate to burnout during exam season."}
               </p>
+            </div>
+          </div>
 
-              <div className="space-y-3 mb-8">
-                {PAYWALL_FEATURES.slice(0, 3).map((f, i) => (
-                  <div key={i} className="flex items-center gap-3 text-sm text-slate-300">
-                    <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0" />
-                    <span>{f.title}: <span className="text-slate-500">{f.desc}</span></span>
-                  </div>
-                ))}
-                <div className="flex items-center gap-3 text-sm text-slate-300">
-                  <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0" />
-                  <span>And 2 more custom modules...</span>
-                </div>
-              </div>
+        </div>
 
-              <Button onClick={handlePayment} fullWidth className="text-lg py-5 mb-4">
-                Unlock My System
-              </Button>
-
-              <div className="flex items-center justify-center gap-4 text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
-                <span>One-time Payment</span>
-                <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
-                <span>Instant Access</span>
-                <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
-                <span>Secure</span>
+        {/* --- GRID STATS --- */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Stat 1 */}
+          <div className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl flex items-center gap-4">
+            <div className="p-3 bg-blue-500/10 rounded-xl text-blue-400">
+              <AlertCircle className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="text-xs text-slate-500 font-medium mb-1">Main Difficulty</div>
+              <div className="text-slate-200 font-semibold text-lg">
+                {mainDifficulty}
               </div>
             </div>
           </div>
 
+          {/* Stat 2 */}
+          <div className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl flex items-center gap-4">
+            <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400">
+              <Clock className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="text-xs text-slate-500 font-medium mb-1">Peak Energy</div>
+              <div className="text-slate-200 font-semibold text-lg capitalize">
+                {peakEnergy}
+              </div>
+            </div>
+          </div>
+
+          {/* Stat 3 */}
+          <div className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl flex items-center gap-4">
+            <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-400">
+              <Zap className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="text-xs text-slate-500 font-medium mb-1">Focus Type</div>
+              <div className="text-slate-200 font-semibold text-lg">
+                {focusType}
+              </div>
+            </div>
+          </div>
+
+          {/* Stat 4 */}
+          <div className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl flex items-center gap-4">
+            <div className="p-3 bg-orange-500/10 rounded-xl text-orange-400">
+              <TrendingUp className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="text-xs text-slate-500 font-medium mb-1">Potential</div>
+              <div className="text-slate-200 font-semibold text-lg">
+                {potential}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* --- PAYWALL ACTION --- */}
+        <div className="mt-8 pt-8 border-t border-slate-800/50 text-center">
+          <h3 className="text-xl font-bold text-white mb-2">Your Optimized System is Ready</h3>
+          <p className="text-slate-400 mb-6 text-sm">Unlock your personalized protocols to lower stress and maximize {focusType} focus.</p>
+
+          <Button onClick={handlePayment} fullWidth className="py-6 text-lg shadow-[0_0_30px_rgba(37,99,235,0.2)]">
+            <Lock className="w-5 h-5 mr-2" /> Unlock My Report & System
+          </Button>
+          <p className="text-xs text-slate-600 mt-4">One-time payment • Instant Download</p>
         </div>
 
       </div>

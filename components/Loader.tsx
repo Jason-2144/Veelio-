@@ -12,7 +12,7 @@ export const Loader: React.FC<LoaderProps> = ({ onComplete }) => {
 
   useEffect(() => {
     // Total duration 30 seconds
-    const duration = 30000;
+    const duration = 4000;
     const intervalTime = 50; // Update progress every 50ms for smoothness
     const steps = duration / intervalTime;
     let currentStep = 0;
