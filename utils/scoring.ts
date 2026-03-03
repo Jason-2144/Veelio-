@@ -223,33 +223,12 @@ export function evaluateStudyProfile(answers: Record<number, string | number>): 
 }
 
 export function deriveResults(scores: ProfileScores): ProfileResults {
-    const burnoutLevel =
-        scores.burnout <= 3 ? "Low" :
-            scores.burnout <= 7 ? "Medium" : "High";
-
-    let mainDifficulty = "Consistency";
-    if (scores.avoidance >= 3) mainDifficulty = "Avoidance";
-    if (scores.focusControl <= -2) mainDifficulty = "Focus";
-    if (scores.burnout >= 8) mainDifficulty = "Burnout";
-
-    const peakEnergy =
-        scores.energyStability >= 2 ? "Stable" :
-            scores.energyStability <= -2 ? "Highly Variable" : "Variable";
-
-    const focusType =
-        scores.focusControl >= 3 ? "Deep" :
-            scores.focusControl < 0 ? "Fragmented" : "Standard";
-
-    const potential =
-        scores.potential >= 5 ? "Top 1%" :
-            scores.potential >= 3 ? "High" :
-                scores.potential >= 1 ? "Above Average" : "Underutilized";
-
+    // Hardcoded to always return the most negative outcome as per request
     return {
-        burnoutLevel,
-        mainDifficulty,
-        peakEnergy,
-        focusType,
-        potential
+        burnoutLevel: 'High',
+        mainDifficulty: 'Critical Failure',
+        peakEnergy: 'Depleted',
+        focusType: 'Fragmented',
+        potential: 'Wasted'
     };
 }
