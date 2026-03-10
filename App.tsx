@@ -6,6 +6,7 @@ import { Result } from './components/Result';
 import { Content } from './components/Content';
 import { UserState, ContentModule } from './types';
 import { CORE_MAPPING, MODIFIER_MAPPING } from './constants';
+import { buildResult } from './utils/scoring';
 
 const App: React.FC = () => {
   const [state, setState] = useState<UserState>({
@@ -19,7 +20,8 @@ const App: React.FC = () => {
   };
 
   const handleQuizComplete = (answers: Record<number, string | number>) => {
-    setState(prev => ({ ...prev, answers, step: 'loader' }));
+    const results = buildResult(answers);
+    setState(prev => ({ ...prev, answers, results, step: 'loader' }));
   };
 
   const handleLoaderComplete = () => {
@@ -27,23 +29,24 @@ const App: React.FC = () => {
   };
 
   const handleUnlock = () => {
+    const { results } = state;
+    if (!results) return;
+
     const modules: ContentModule[] = [];
-    const { answers } = state;
 
     // 1. Core Module Calculation
-    let exam = answers[1] as string; // Question 1: Exam (jee/neet)
-    const grade = answers[2] as string; // Question 2: Grade (11/12/dropper/revision)
+    const [exam, stage, type] = results.assignedCore.split('_');
+    const examKey = exam.toLowerCase();
+    const stageKey = stage.toLowerCase();
 
-    // Normalize exam IDs
-    if (exam === 'jee_boards') exam = 'jee';
-    if (exam === 'neet_boards') exam = 'neet';
-
-    if (exam && grade && CORE_MAPPING[exam]?.[grade]) {
-      modules.push(CORE_MAPPING[exam][grade]);
+    if (CORE_MAPPING[examKey]?.[stageKey]) {
+      modules.push(CORE_MAPPING[examKey][stageKey]);
     }
 
     // 2. Modifiers Calculation
-    Object.entries(answers).forEach(([questionId, answerId]) => {
+    // Map assignedModifier strings to actual modules if they exist in mappings
+    // For simplicity with existing core, we'll check common modifier questions
+    Object.entries(state.answers).forEach(([questionId, answerId]) => {
       const qId = Number(questionId);
       const aId = String(answerId);
 
@@ -64,7 +67,7 @@ const App: React.FC = () => {
       {state.step === 'landing' && <Landing onStart={handleStart} />}
       {state.step === 'quiz' && <Quiz onComplete={handleQuizComplete} onExit={handleBackToLanding} />}
       {state.step === 'loader' && <Loader onComplete={handleLoaderComplete} />}
-      {state.step === 'result' && <Result onUnlock={handleUnlock} answers={state.answers} />}
+      {state.step === 'result' && <Result onUnlock={handleUnlock} results={state.results!} />}
       {state.step === 'content' && <Content modules={state.unlockedModules || []} />}
     </div>
   );

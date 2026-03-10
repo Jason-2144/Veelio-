@@ -1,234 +1,241 @@
-export interface ProfileScores {
-    consistency: number;
-    energyStability: number;
-    focusControl: number;
-    burnout: number;
-    avoidance: number;
-    systemMaturity: number;
-    potential: number;
-}
+import { MetricScores, DiagnosticResults, Archetype, Insight } from '../types';
+import { CORE_MAPPING, MODIFIER_MAPPING } from '../constants';
 
-export interface ProfileResults {
-    burnoutLevel: 'Low' | 'Medium' | 'High';
-    mainDifficulty: string;
-    peakEnergy: string;
-    focusType: string;
-    potential: string;
-}
-
-export function evaluateStudyProfile(answers: Record<number, string | number>): ProfileScores {
-    let scores = {
-        consistency: 0,
-        energyStability: 0,
-        focusControl: 0,
-        burnout: 0,
-        avoidance: 0,
-        systemMaturity: 0,
-        potential: 0
+export function evaluateMetrics(answers: Record<number, string | number>): MetricScores {
+    const metrics: MetricScores = {
+        focus: 50,
+        structure: 50,
+        burnout: 20,
+        consistency: 50,
+        confidence: 50,
+        energy_pattern: 50
     };
 
-    const getAnswer = (id: number) => answers[id] as string;
+    const getAnswer = (id: number) => String(answers[id]);
 
-    // Q1 – Exam
-    const q1 = getAnswer(1);
-    if (["jee", "neet"].includes(q1)) scores.potential += 2;
-    if (q1.includes("_boards")) scores.burnout += 2;
+    // focusScore Logic
+    const q8 = getAnswer(8); // Focus Duration
+    if (q8 === '45_plus') metrics.focus += 30;
+    if (q8 === '25_45') metrics.focus += 10;
+    if (q8 === '10_25') metrics.focus -= 20;
+    if (q8 === 'less_10') metrics.focus -= 40;
 
-    // Q2 – Stage
-    const q2 = getAnswer(2);
-    if (q2 === "dropper") {
-        scores.burnout += 2;
-        scores.potential += 2;
-    }
-    if (q2 === "revision") scores.burnout += 3;
+    const q9 = getAnswer(9); // Restlessness
+    if (q9 === 'often') metrics.focus -= 20;
+    if (q9 === 'rarely' || q9 === 'never') metrics.focus += 10;
 
-    // Q3 – Months left
-    const q3 = getAnswer(3);
-    const monthsMap: Record<string, number> = {
-        "15_plus": 0,
-        "10_12": 1,
-        "8_10": 2,
-        "4_6": 3,
-        "2_3": 4
-    };
-    scores.burnout += monthsMap[q3] || 0;
+    // structureScore Logic
+    const q7 = getAnswer(7); // Fixed routine
+    if (q7 === 'yes') metrics.structure += 30;
+    if (q7 === 'no') metrics.structure -= 30;
 
-    // Q4 – Prep feeling
-    const q4 = getAnswer(4);
-    if (q4 === "ahead") scores.consistency += 2;
-    if (q4 === "on_track") scores.consistency += 1;
-    if (q4 === "behind") scores.burnout += 1;
-    if (q4 === "very_behind") {
-        scores.burnout += 3;
-        scores.avoidance += 2;
-    }
+    const q16 = getAnswer(16); // Weekly structure
+    if (q16 === 'no') metrics.structure += 20;
+    if (q16 === 'yes') metrics.structure -= 30;
 
-    // Q5 – Confidence
+    // burnoutScore Logic
+    const q10 = getAnswer(10); // Mental tiredness
+    if (q10 === 'often') metrics.burnout += 40;
+    if (q10 === 'sometimes') metrics.burnout += 20;
+
+    const q13 = getAnswer(13); // Extreme hours
+    if (q13 === 'yes') metrics.burnout += 30;
+
+    const q3 = getAnswer(3); // Months left
+    if (['2_3', '4_6'].includes(q3)) metrics.burnout += 20;
+
+    // consistencyScore Logic
+    const q12 = getAnswer(12); // Motivated but inconsistent
+    if (q12 === 'yes') metrics.consistency -= 30;
+    if (q12 === 'never') metrics.consistency += 20;
+
+    const q11 = getAnswer(11); // Bad day effect
+    if (q11 === 'yes') metrics.consistency -= 20;
+
+    // confidenceScore Logic
     const q5 = getAnswer(5);
-    if (q5 === "high") scores.potential += 2;
-    if (q5 === "moderate") scores.potential += 1;
-    if (q5 === "low") {
-        scores.burnout += 2;
-        scores.avoidance += 1;
-    }
+    if (q5 === 'high') metrics.confidence = 85;
+    if (q5 === 'low') metrics.confidence = 30;
 
-    // Q6 – Focus timing
+    // Energy Pattern
     const q6 = getAnswer(6);
-    if (q6 === "varies") scores.energyStability -= 2;
-    else scores.energyStability += 1;
+    if (q6 === 'varies') metrics.energy_pattern -= 20;
+    else metrics.energy_pattern += 20;
 
-    // Q7 – Fixed routine
-    const q7 = getAnswer(7);
-    if (q7 === "yes") scores.consistency += 3;
-    if (q7 === "somewhat") scores.consistency += 1;
-    if (q7 === "no") scores.consistency -= 3;
+    // Clamp values 0-100
+    Object.keys(metrics).forEach(key => {
+        metrics[key as keyof MetricScores] = Math.max(0, Math.min(100, metrics[key as keyof MetricScores]));
+    });
 
-    // Q8 – Focus duration
-    const q8 = getAnswer(8);
-    const focusMap: Record<string, number> = {
-        "45_plus": 3,
-        "25_45": 1,
-        "10_25": -1,
-        "less_10": -3
-    };
-    scores.focusControl += focusMap[q8] || 0;
-
-    // Q9 – Restlessness
-    const q9 = getAnswer(9);
-    const restlessMap: Record<string, number> = {
-        "often": -3,
-        "sometimes": -1,
-        "rarely": 1,
-        "never": 2
-    };
-    scores.focusControl += restlessMap[q9] || 0;
-
-    // Q10 – Mental tiredness
-    const q10 = getAnswer(10);
-    const tiredMap: Record<string, number> = {
-        "often": 3,
-        "sometimes": 1,
-        "rarely": -1,
-        "never": -2
-    };
-    scores.burnout += tiredMap[q10] || 0;
-
-    // Q11 – Bad day cascade
-    const q11 = getAnswer(11);
-    const cascadeMap: Record<string, number> = {
-        "yes": -3,
-        "sometimes": -1,
-        "rarely": 1,
-        "never": 2
-    };
-    scores.consistency += cascadeMap[q11] || 0;
-
-    // Q12 – Motivated but inconsistent
-    const q12 = getAnswer(12);
-    if (q12 === "yes") {
-        scores.consistency -= 3;
-        scores.potential += 1;
-    }
-    if (q12 === "sometimes") scores.consistency -= 1;
-    if (q12 === "rarely") scores.consistency += 1;
-    if (q12 === "never") scores.consistency += 2;
-
-    // Q13 – Extreme hours
-    const q13 = getAnswer(13);
-    const extremeMap: Record<string, number> = {
-        "yes": 3,
-        "sometimes": 1,
-        "rarely": -1,
-        "never": -2
-    };
-    scores.burnout += extremeMap[q13] || 0;
-
-    // Q14 – Abandoned plans
-    const q14 = getAnswer(14);
-    const abandonMap: Record<string, number> = {
-        "yes": -3,
-        "few": -1,
-        "rarely": 1,
-        "never": 2
-    };
-    scores.systemMaturity += abandonMap[q14] || 0;
-
-    // Q15 – Overstudy favorites
-    const q15 = getAnswer(15);
-    const overMap: Record<string, number> = {
-        "yes": 3,
-        "sometimes": 1,
-        "rarely": -1,
-        "never": -2
-    };
-    scores.avoidance += overMap[q15] || 0;
-
-    // Q16 – Weekly structure
-    const q16 = getAnswer(16);
-    if (q16 === "yes") scores.systemMaturity -= 3; // Note: Logic seems inverted in user request ("Study daily without structure" -> "Yes" means low maturity). Correct.
-    if (q16 === "sometimes") scores.systemMaturity -= 1;
-    if (q16 === "no") scores.systemMaturity += 2;
-
-    // Q17 – Revision
-    const q17 = getAnswer(17);
-    if (q17 === "systematic") scores.systemMaturity += 3;
-    if (q17 === "random") scores.systemMaturity -= 1;
-    if (q17 === "rarely") scores.burnout += 2;
-
-    // Q18 – Avoid tests
-    const q18 = getAnswer(18);
-    const testMap: Record<string, number> = {
-        "yes": 3,
-        "sometimes": 1,
-        "rarely": -1,
-        "never": -2
-    };
-    scores.avoidance += testMap[q18] || 0;
-
-    // Q19 – System >2 weeks
-    const q19 = getAnswer(19);
-    if (q19 === "yes") scores.systemMaturity += 3;
-    if (q19 === "no") scores.systemMaturity -= 2;
-    if (q19 === "unsure") scores.systemMaturity -= 1;
-
-    // Q20 – Adapted to bad days
-    const q20 = getAnswer(20);
-    if (q20 === "yes") scores.systemMaturity += 3;
-    if (q20 === "somewhat") scores.systemMaturity += 1;
-    if (q20 === "no") scores.systemMaturity -= 2;
-    if (q20 === "none") scores.systemMaturity -= 3;
-
-    // Q21 – Will follow on bad days
-    const q21 = getAnswer(21);
-    if (q21 === "yes") scores.potential += 2;
-    if (q21 === "maybe") scores.potential += 1;
-    if (q21 === "no") scores.potential -= 2;
-
-    // Q22 – Preference
-    const q22 = getAnswer(22);
-    if (q22 === "fixed") scores.energyStability += 1;
-    if (q22 === "flexible") {
-        scores.energyStability -= 2;
-        scores.systemMaturity += 2;
-    }
-
-    // Q23 – Athlete
-    const q23 = getAnswer(23);
-    if (q23 === "yes") {
-        scores.burnout += 1;
-        scores.energyStability += 1;
-    }
-
-    return scores;
+    return metrics;
 }
 
-export function deriveResults(scores: ProfileScores): ProfileResults {
-    // Hardcoded to always return the most negative outcome as per request
+export function deriveArchetype(metrics: MetricScores): Archetype {
+    if (metrics.burnout > 60) {
+        return {
+            title: "The Burnout Grinder",
+            description: "You are putting in effort, but your energy reserves are critically low, leading to diminishing returns."
+        };
+    }
+    if (metrics.structure < 40 && metrics.consistency < 40) {
+        return {
+            title: "The Unstructured Hardworker",
+            description: "You are putting in effort, but your preparation lacks a stable execution framework, making progress feel random."
+        };
+    }
+    if (metrics.focus < 40) {
+        return {
+            title: "The Fragmented Focus Studier",
+            description: "You have the will to study, but external or internal distractions are breaking your deep work cycles."
+        };
+    }
+    if (metrics.consistency < 50) {
+        return {
+            title: "The Inconsistent Sprinter",
+            description: "You have periods of high intensity followed by drops in momentum, preventing long-term compounding of knowledge."
+        };
+    }
     return {
-        burnoutLevel: 'High',
-        mainDifficulty: 'Critical Failure',
-        peakEnergy: 'Depleted',
-        focusType: 'Fragmented',
-        potential: 'Wasted'
+        title: "The Stable Builder",
+        description: "You have a solid foundation, but there are specific optimizations needed to reach peak competitive performance."
+    };
+}
+
+export function generateInsights(metrics: MetricScores): Insight[] {
+    const insights: Insight[] = [];
+
+    if (metrics.focus < 50) {
+        insights.push({
+            title: "Focus Pattern",
+            description: "Your focus cycles appear shorter than the study sessions you attempt.",
+            icon: "Zap"
+        });
+    }
+
+    if (metrics.structure < 50) {
+        insights.push({
+            title: "Structure Stability",
+            description: "Your preparation currently depends on daily motivation rather than a repeatable system.",
+            icon: "Target"
+        });
+    }
+
+    if (metrics.burnout > 50) {
+        insights.push({
+            title: "Burnout Risk",
+            description: "One disrupted study day appears to affect your momentum for multiple days.",
+            icon: "AlertCircle"
+        });
+    }
+
+    if (metrics.consistency < 50) {
+        insights.push({
+            title: "Energy Pattern",
+            description: "Your current schedule might be working against your natural peak focus hours.",
+            icon: "Clock"
+        });
+    }
+
+    return insights.slice(0, 4);
+}
+
+export function buildResult(answers: Record<number, string | number>): DiagnosticResults {
+    const metrics = evaluateMetrics(answers);
+    const archetype = deriveArchetype(metrics);
+    const insights = generateInsights(metrics);
+    const getAnswer = (id: number) => String(answers[id]);
+
+    // Risk Profile Calculation
+    let riskProfile: 'HIGH BURNOUT RISK' | 'MODERATE INSTABILITY' | 'STABLE BUT INEFFICIENT' = 'MODERATE INSTABILITY';
+    if (metrics.burnout > 70 || (metrics.burnout > 50 && metrics.consistency < 40)) {
+        riskProfile = 'HIGH BURNOUT RISK';
+    } else if (metrics.structure > 60 && metrics.focus > 60) {
+        riskProfile = 'STABLE BUT INEFFICIENT';
+    }
+
+    // Diagnostic Insights Derivation
+    const focusPattern = metrics.focus < 40 ? "Low sustained focus" : metrics.focus < 70 ? "Unstable focus" : "High concentration capable";
+
+    const q8 = getAnswer(8);
+    let focusRange = "45–90";
+    if (q8 === '45_plus') focusRange = "90+";
+    if (q8 === '25_45') focusRange = "45–90";
+    if (q8 === '10_25') focusRange = "25–45";
+    if (q8 === 'less_10') focusRange = "<25";
+
+    const peakQ = getAnswer(6);
+    let energyType = "Varies";
+    let energyWindow = "Unpredictable hours";
+    if (peakQ === 'morning') { energyType = "Early bird"; energyWindow = "5 AM to 9 AM"; }
+    if (peakQ === 'night') { energyType = "Night owl"; energyWindow = "9 PM to 1 AM"; }
+
+    const strategyMismatch = "Trying to follow generic routines that don't match your biology";
+    const stressResponse = metrics.burnout > 60 ? "Guilt spiral when falling behind" : "High-pressure performance pressure";
+
+    const timeQ = getAnswer(3);
+    let timelinePressure = "Limited time remaining before your exam";
+    let monthsLeft = "12";
+    if (timeQ === '15_plus') { timelinePressure = "Stable preparation timeline"; monthsLeft = "15+"; }
+    if (timeQ === '10_12') { timelinePressure = "Moderate timeline pressure"; monthsLeft = "10–12"; }
+    if (timeQ === '8_10') { timelinePressure = "Elevated timeline pressure"; monthsLeft = "8–10"; }
+    if (timeQ === '4_6') { timelinePressure = "Significant timeline pressure"; monthsLeft = "4–6"; }
+    if (timeQ === '2_3') { timelinePressure = "High timeline pressure"; monthsLeft = "2-3"; }
+    if (timeQ === '1_month') { timelinePressure = "Critical timeline pressure"; monthsLeft = "1"; }
+
+    const examQ = getAnswer(1);
+    let examType = examQ.toUpperCase();
+    if (examQ === 'jee_boards') examType = 'JEE + Boards';
+    if (examQ === 'neet_boards') examType = 'NEET + Boards';
+
+    // Syllabus remaining
+    const feelQ = getAnswer(4);
+    let syllabusRemaining = 40;
+    if (feelQ === 'ahead') syllabusRemaining = 20;
+    if (feelQ === 'on_track') syllabusRemaining = 40;
+    if (feelQ === 'behind') syllabusRemaining = 60;
+    if (feelQ === 'very_behind') syllabusRemaining = 85;
+
+    // Core Module Friendly Name
+    let examKey = getAnswer(1);
+    if (examKey === 'jee_boards') examKey = 'jee';
+    if (examKey === 'neet_boards') examKey = 'neet';
+    const stageKey = getAnswer(2);
+    const coreModuleObj = CORE_MAPPING[examKey]?.[stageKey];
+    const coreModule = coreModuleObj ? coreModuleObj.title : `${examKey.toUpperCase()} Core System`;
+    const assignedCore = `${examKey.toUpperCase()}_${stageKey.toUpperCase()}_CORE`;
+
+    // Modifiers Friendly Names
+    const assignedModifiers: string[] = [];
+    const modifierTitles: string[] = [];
+
+    Object.entries(answers).forEach(([qId, aId]) => {
+        const mod = MODIFIER_MAPPING[Number(qId)]?.[String(aId)];
+        if (mod) {
+            assignedModifiers.push(mod.id);
+            modifierTitles.push(mod.title);
+        }
+    });
+
+    return {
+        metrics,
+        archetype,
+        insights,
+        assignedCore,
+        assignedModifiers,
+        riskProfile,
+        focusPattern,
+        focusRange,
+        energyType,
+        energyWindow,
+        strategyMismatch,
+        stressResponse,
+        timelinePressure,
+        monthsLeft,
+        examType,
+        syllabusRemaining,
+        coreModule,
+        modifier1: modifierTitles[0] || "Low Focus Modifier",
+        modifier2: modifierTitles[1] || "Night Owl Protocol",
+        modifier3: modifierTitles[2] || "Burnout Prevention Protocol"
     };
 }
