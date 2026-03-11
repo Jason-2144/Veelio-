@@ -53,6 +53,7 @@ export interface DiagnosticResults {
   monthsLeft: string;
   examType: string;
   syllabusRemaining: number;
+  preparationStabilityIndex: number;
   coreModule: string;
   modifier1: string;
   modifier2: string;
